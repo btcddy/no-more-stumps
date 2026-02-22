@@ -54,11 +54,11 @@ const getYouTubeThumbnail = (videoId) =>
 
 const SAMPLE_GALLERY = [
   { type: "video", url: "/images/grinding.mp4", caption: "Large oak stump removal", poster: "/images/stump-thumbnail.png" },
+  { type: "image", url: "/images/image2.jpg", caption: "Logo" },
   { type: "image", url: "/images/machine.jpg", caption: "Bandit Machine" },
-  { type: "image", url: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop", caption: "Clean finish after grinding" },
-  { type: "image", url: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&h=400&fit=crop", caption: "Commercial lot preparation" },
-  { type: "youtube", url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", caption: "Stump grinding in action", videoId: "dQw4w9WgXcQ" },
-  { type: "image", url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=600&h=400&fit=crop", caption: "Before & after comparison" },
+  { type: "image", url: "/images/banditGrind.jpg", caption: "Bandit Grinding Stump" },
+  { type: "image", url: "/images/largeStump.jpg", caption: "Huge stump for removal" },
+  { type: "image", url: "/images/littleBro.jpg", caption: "Grinding a stump" },
 ];
 
 const SAMPLE_REVIEWS = [
@@ -482,11 +482,7 @@ export default function StumpBustersWebsite() {
         justifyContent: "space-between", height: 68
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{
-            width: 40, height: 40, borderRadius: 10,
-            background: "linear-gradient(135deg, #D4A017, #8B6914)",
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22
-          }}></div>
+          <img src="/images/favicon-128.png" alt="No More Stumps" style={{width: 40, height: 40, borderRadius: 10, objectFit: "cover"}} />
           <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color: "#D4A017", letterSpacing: "-0.5px" }}> NoMoreStumps</span>
         </div>
         <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
