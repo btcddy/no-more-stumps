@@ -3,6 +3,22 @@ import { useState, useEffect, useRef } from "react";
 
 const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE";
 
+// TODO: Replace YOUR_PLACE_ID_HERE with actual Google Place ID from https://developers.google.com/maps/documentation/places/web-service/place-id
+// Unfortunately, you can't. Google doesn't allow any third-party site to post reviews directly to your Google Business Profile — there's no API for it. It's a closed system where reviews can only be submitted through Google itself.
+// What you can do instead (and your site already supports):
+// "Leave a Google Review" button — Your site already has this. It links customers directly to your Google Maps review page. You just need to plug in your Place ID.
+// On-site reviews — Your site already collects these separately and displays them on the page.
+// To activate the Google Review button:
+// Step 1 — Find your Google Place ID:
+// Go to: https://developers.google.com/maps/documentation/places/web-service/place-id
+// Search for your business name
+// Copy the Place ID (looks like ChIJ...)
+// Step 2 — Open app/page.js and find this line near the very top:
+// const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE";
+// Replace YOUR_PLACE_ID_HERE with your actual Place ID.
+// Now when customers click "Leave a Google Review" on your site, it opens Google Maps directly to your review form in a new tab.
+// Best strategy: After a job, text or email customers a link to your site. They can leave an on-site review for social proof AND click through to leave a Google review which helps your SEO and Maps ranking.
+
 // --- Video URL Utilities ---
 const getVideoType = (url) => {
   if (!url) return "unknown";
