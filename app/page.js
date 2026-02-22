@@ -5,6 +5,9 @@ const GOOGLE_REVIEW_URL = "https://search.google.com/local/writereview?placeid=Y
 
 // TODO: Replace YOUR_PLACE_ID_HERE with actual Google Place ID from https://developers.google.com/maps/documentation/places/web-service/place-id
 
+// Owner login password — change this to whatever you want
+const ADMIN_PASSWORD = "stumps2026";
+
 // --- Video URL Utilities ---
 const getVideoType = (url) => {
   if (!url) return "unknown";
@@ -359,7 +362,7 @@ const MobileMenu = ({ activeSection, onNav, isAdmin, onToggleAdmin, onClose }) =
       position: "absolute", top: 14, right: 16,
       background: "none", border: "none", color: "#D4A017", fontSize: 32, cursor: "pointer", padding: 10
     }}>×</button>
-    {[["home", "Home"], ["gallery", "Gallery"], ["reviews", "Reviews"], ["estimate", "Free Estimate"]].map(([id, label]) => (
+    {[["home", "Home"], ["gallery", "Gallery"], ["reviews", "Reviews"]].map(([id, label]) => (
       <button key={id} onClick={() => { onNav(id); onClose(); }} style={{
         background: "none", border: "none",
         color: activeSection === id ? "#D4A017" : "#8B7355",
@@ -367,6 +370,12 @@ const MobileMenu = ({ activeSection, onNav, isAdmin, onToggleAdmin, onClose }) =
         cursor: "pointer", padding: "14px 32px",
       }}>{label}</button>
     ))}
+    <a href="tel:+17862833491" onClick={onClose} style={{
+      marginTop: 12, background: "linear-gradient(135deg, #D4A017, #B8860B)",
+      color: "#0F0C08", borderRadius: 10, padding: "14px 36px",
+      fontSize: 18, fontWeight: 700, textDecoration: "none",
+      fontFamily: "'DM Sans', sans-serif",
+    }}>📞 Call Now</a>
     <button onClick={() => { onToggleAdmin(); onClose(); }} style={{
       marginTop: 20, background: isAdmin ? "rgba(212,160,23,0.15)" : "transparent",
       border: "1px solid", borderColor: isAdmin ? "#D4A017" : "rgba(139,115,85,0.3)",
@@ -391,8 +400,6 @@ export default function StumpBustersWebsite() {
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [estimate, setEstimate] = useState({ firstName: "", lastName: "", address: "", email: "", phone: "" });
-  const [estimateSubmitted, setEstimateSubmitted] = useState(false);
 
   // FIX: localStorage is synchronous — no await, no .value
   useEffect(() => {
@@ -405,18 +412,18 @@ export default function StumpBustersWebsite() {
 
   const handleAddMedia = (item) => { saveGallery([item, ...gallery]); setShowAdmin(false); };
 
+  const toggleAdmin = () => {
+    if (isAdmin) { setIsAdmin(false); return; }
+    const pw = prompt("Enter owner password:");
+    if (pw === ADMIN_PASSWORD) setIsAdmin(true);
+    else if (pw !== null) alert("Incorrect password");
+  };
+
   const handleReviewSubmit = () => {
     if (!reviewName.trim() || !reviewText.trim() || reviewRating === 0) return;
     saveReviews([{ name: reviewName.trim(), rating: reviewRating, text: reviewText.trim(), date: new Date().toISOString().split("T")[0] }, ...reviews]);
     setReviewSubmitted(true);
     setTimeout(() => { setReviewName(""); setReviewText(""); setReviewRating(0); setReviewSubmitted(false); }, 3000);
-  };
-
-  const handleEstimateSubmit = () => {
-    const { firstName, lastName, address, email, phone } = estimate;
-    if (!firstName || !lastName || !address || !email || !phone) return;
-    setEstimateSubmitted(true);
-    setTimeout(() => { setEstimate({ firstName: "", lastName: "", address: "", email: "", phone: "" }); setEstimateSubmitted(false); }, 4000);
   };
 
   const scrollTo = (id) => { document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); setActiveSection(id); };
@@ -476,14 +483,20 @@ export default function StumpBustersWebsite() {
           </button>
         ) : (
           <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
-            {[["home", "Home"], ["gallery", "Gallery"], ["reviews", "Reviews"], ["estimate", "Free Estimate"]].map(([id, label]) => (
+            {[["home", "Home"], ["gallery", "Gallery"], ["reviews", "Reviews"]].map(([id, label]) => (
               <button key={id} onClick={() => scrollTo(id)} style={{
                 background: "none", border: "none", color: activeSection === id ? "#D4A017" : "#8B7355",
                 fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 600,
                 cursor: "pointer", letterSpacing: "0.5px", textTransform: "uppercase"
               }}>{label}</button>
             ))}
-            <button onClick={() => setIsAdmin(!isAdmin)} style={{
+            <a href="tel:+17862833491" style={{
+              background: "linear-gradient(135deg, #D4A017, #B8860B)",
+              color: "#0F0C08", borderRadius: 8, padding: "8px 16px",
+              fontSize: 13, fontWeight: 700, textDecoration: "none",
+              fontFamily: "'DM Sans', sans-serif",
+            }}>📞 Call Now</a>
+            <button onClick={toggleAdmin} style={{
               background: isAdmin ? "rgba(212,160,23,0.15)" : "transparent",
               border: "1px solid", borderColor: isAdmin ? "#D4A017" : "rgba(139,115,85,0.3)",
               color: isAdmin ? "#D4A017" : "#6B5B45", borderRadius: 8,
@@ -496,7 +509,7 @@ export default function StumpBustersWebsite() {
 
       {mobileMenuOpen && (
         <MobileMenu activeSection={activeSection} onNav={scrollTo}
-          isAdmin={isAdmin} onToggleAdmin={() => setIsAdmin(!isAdmin)}
+          isAdmin={isAdmin} onToggleAdmin={toggleAdmin}
           onClose={() => setMobileMenuOpen(false)} />
       )}
 
@@ -547,13 +560,15 @@ export default function StumpBustersWebsite() {
             flexDirection: isMobile ? "column" : "row",
             padding: isMobile ? "0 16px" : 0
           }}>
-            <button onClick={() => scrollTo("estimate")} style={{
+            <a href="tel:+17862833491" style={{
+              display: "block", textAlign: "center",
               padding: "16px 36px", borderRadius: 12, border: "none",
               background: "linear-gradient(135deg, #D4A017, #B8860B)",
               color: "#0F0C08", fontFamily: "'DM Sans', sans-serif",
               fontSize: 16, fontWeight: 700, cursor: "pointer",
-              boxShadow: "0 4px 24px rgba(212,160,23,0.3)"
-            }}>Get Free Estimate</button>
+              boxShadow: "0 4px 24px rgba(212,160,23,0.3)",
+              textDecoration: "none",
+            }}>📞 Call for Free Estimate</a>
             <button onClick={() => scrollTo("gallery")} style={{
               padding: "16px 36px", borderRadius: 12,
               border: "1px solid rgba(212,160,23,0.35)", background: "rgba(212,160,23,0.08)",
@@ -733,81 +748,6 @@ export default function StumpBustersWebsite() {
               }}>★ Leave a Google Review</a>
               <p style={{ color: "#5a4d3a", fontSize: 12, marginTop: 14 }}>Opens Google Maps in a new tab</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ESTIMATE FORM ===== */}
-      <section id="estimate" style={{ padding: `${sectionPad}px ${px}px` }}>
-        <div style={{ maxWidth: 640, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: isMobile ? 28 : 48 }}>
-            <p style={{ fontSize: 13, color: "#D4A017", textTransform: "uppercase", letterSpacing: "3px", fontWeight: 600, marginBottom: 12 }}>Get Started</p>
-            <h2 style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: isMobile ? 28 : "clamp(32px, 5vw, 48px)",
-              fontWeight: 700, margin: "0 0 12px", color: "#E8DCC8"
-            }}>Request a Free Estimate</h2>
-            <p style={{ color: "#6B5B45", maxWidth: 440, margin: "0 auto", lineHeight: 1.7, fontSize: isMobile ? 14 : 16 }}>
-              Fill out the form below and we'll get back to you within 24 hours with a detailed, no-obligation quote.
-            </p>
-          </div>
-
-          <div style={{
-            background: "linear-gradient(165deg, rgba(42,35,24,0.5), rgba(26,21,16,0.7))",
-            border: "1px solid rgba(139,115,85,0.2)", borderRadius: 20,
-            padding: isMobile ? "24px 20px" : "40px"
-          }}>
-            {estimateSubmitted ? (
-              <div style={{ textAlign: "center", padding: "32px 16px", animation: "slideUp 0.4s ease" }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, color: "#D4A017", marginBottom: 10 }}>Estimate Request Received!</h3>
-                <p style={{ color: "#8B7355", lineHeight: 1.7, fontSize: 15 }}>
-                  We'll review your request and get back to you within 24 hours. Thank you for choosing NoMoreStumps!
-                </p>
-              </div>
-            ) : (<>
-              <div style={{
-                display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-                gap: 14, marginBottom: 14
-              }}>
-                <div>
-                  <label style={{ fontSize: 12, color: "#6B5B45", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "1px", fontWeight: 600 }}>First Name *</label>
-                  <input value={estimate.firstName} onChange={(e) => setEstimate({ ...estimate, firstName: e.target.value })} placeholder="John" style={inputStyle} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, color: "#6B5B45", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "1px", fontWeight: 600 }}>Last Name *</label>
-                  <input value={estimate.lastName} onChange={(e) => setEstimate({ ...estimate, lastName: e.target.value })} placeholder="Smith" style={inputStyle} />
-                </div>
-              </div>
-              <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, color: "#6B5B45", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "1px", fontWeight: 600 }}>Property Address *</label>
-                <input value={estimate.address} onChange={(e) => setEstimate({ ...estimate, address: e.target.value })} placeholder="123 Main St, Tampa, FL 33601" style={inputStyle} />
-              </div>
-              <div style={{
-                display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-                gap: 14, marginBottom: 24
-              }}>
-                <div>
-                  <label style={{ fontSize: 12, color: "#6B5B45", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "1px", fontWeight: 600 }}>Email *</label>
-                  <input value={estimate.email} onChange={(e) => setEstimate({ ...estimate, email: e.target.value })} placeholder="john@email.com" type="email" style={inputStyle} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, color: "#6B5B45", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "1px", fontWeight: 600 }}>Phone *</label>
-                  <input value={estimate.phone} onChange={(e) => setEstimate({ ...estimate, phone: e.target.value })} placeholder="(555) 123-4567" type="tel" style={inputStyle} />
-                </div>
-              </div>
-              <button onClick={handleEstimateSubmit}
-                disabled={!estimate.firstName || !estimate.lastName || !estimate.address || !estimate.email || !estimate.phone}
-                style={{
-                  width: "100%", padding: "16px", borderRadius: 12, border: "none",
-                  background: (estimate.firstName && estimate.lastName && estimate.address && estimate.email && estimate.phone)
-                    ? "linear-gradient(135deg, #D4A017, #B8860B)" : "rgba(139,115,85,0.3)",
-                  color: (estimate.firstName && estimate.lastName) ? "#0F0C08" : "#5a4d3a",
-                  fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 700,
-                  cursor: (estimate.firstName && estimate.lastName && estimate.address && estimate.email && estimate.phone)
-                    ? "pointer" : "default",
-                }}>Request My Free Estimate →</button>
-            </>)}
           </div>
         </div>
       </section>
